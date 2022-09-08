@@ -15,8 +15,8 @@ public class ConceitoThread {
 	}
 	
 	public static void main(String[] args) {
-		// randomize();
-		new Thread(ConceitoThread::randomize).start();
+		randomize();
+		// new Thread(ConceitoThread::randomize).start();
 		System.out.println("Oi, main!");
 	}
 }
