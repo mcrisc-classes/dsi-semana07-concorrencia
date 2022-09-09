@@ -13,11 +13,13 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 
 public class BloqueioGUI {
 	private JFrame frame;
 	private JLabel labelStatus;
 	private JTextField textNome;
+	private JButton botao;
 
 	
 	private void buildGUI() {
@@ -29,7 +31,7 @@ public class BloqueioGUI {
 		textNome = new JTextField(20);
 		panel.add(textNome);
 		
-		JButton botao = new JButton("Buscar");
+		botao = new JButton("Buscar");
 		botao.addActionListener(this::onClick);
 		panel.add(botao);
 		
@@ -70,8 +72,34 @@ public class BloqueioGUI {
 	private void onClick(ActionEvent e) {
 		String nome = textNome.getText();
 		labelStatus.setText("Buscando...");
-		String res = buscar(nome);
-		labelStatus.setText("Encontrado: " + res);
+		botao.setEnabled(false);
+		
+		SwingWorker<String, Void> worker = new SwingWorker<>() {
+
+			@Override
+			protected String doInBackground() throws Exception {
+				String res = buscar(nome);
+				return res;
+			}
+			
+			@Override
+			protected void done() {
+				try {
+					String res = get();
+					labelStatus.setText("Encontrado: " + res);
+					botao.setEnabled(true);					
+					
+				} catch (Exception e) {
+					JOptionPane.showMessageDialog(frame, e);
+					e.printStackTrace();
+				}
+								
+			}
+		};
+		
+		worker.execute();
+		
+		
 	}
 	
 	public static void main(String[] args) {
